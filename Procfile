@@ -1,1 +1,1 @@
-web: gunicorn QuestionBankIOE.wsgi
+web: gunicorn yao.wsgi
