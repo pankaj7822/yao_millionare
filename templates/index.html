@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-main>
+        <v-container>
+            <v-text-field
+            label="Alice Wealth in Million"
+            outlined
+            v-model="alice"
+          ></v-text-field>
+          <v-text-field
+          label="Bob Wealth in Million"
+          outlined
+          v-model="bob"
+        ></v-text-field>
+        <v-text-field
+        label="Wealth Compared"
+        outlined
+        disabled
+        v-model="message"
+      ></v-text-field>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script>
+    new Vue({
+    delimiters: ["[[", "]]"],
+    el: '#app',
+    vuetify: new Vuetify(),
+    data: {
+    message: 'Alice is Reacher than bob',
+    alice:8,
+    bob:5
+  },
+  methods:{
+     getCookie: function(cname) {
+  var name = cname + "=";
+  var ca = document.cookie.split(';');
+  for(var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+  },
+  watch: {
+    alice: function () {
+        let data = {x:this.alice,y:this.bob};
+        let csrftoken = this.getCookie('csrftoken');
+        fetch("getricher/", {
+        method: "POST", 
+        body: JSON.stringify(data),
+        headers: { "X-CSRFToken": csrftoken },
+        }).then(res=>res.json()).then(res => {
+        console.log("Request complete! response:", res);
+        if(res==1){
+            this.message="Alice is Reacher than bob";
+        }
+        else{
+            this.message="Bob is richer than Alice";
+        }
+        });
+        
+    },
+    bob: function () {
+        let data = {x:this.alice,y:this.bob};
+        let csrftoken = this.getCookie('csrftoken');
+        fetch("getricher/", {
+        method: "POST", 
+        body: JSON.stringify(data),
+        headers: { "X-CSRFToken": csrftoken },
+        }).then(res=>res.json()).then(res => {
+        console.log("Request complete! response:", res);
+        if(res==1){
+            this.message="Alice is Reacher than bob";
+        }
+        else{
+            this.message="Bob is richer than Alice";
+        }
+        });
+        
+    }
+  }
+    })
+  </script>
+</body>
+</html>
