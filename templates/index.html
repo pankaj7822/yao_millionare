@@ -28,6 +28,51 @@
         disabled
         v-model="message"
       ></v-text-field>
+      <v-btn @click="toogleshow()">
+      <v-icon
+      large
+      color="green darken-2" v-if="!show">
+      mdi-eye
+    </v-icon>
+    <v-icon
+    large
+    color="green darken-2" v-if="show">
+    mdi-eye-off
+  </v-icon>
+  </v-btn>
+  <template v-show="show">
+      <v-subheader v-show="show">Alice T matrix</v-subheader>
+      <v-simple-table dark v-show="show">
+        <template v-slot:default>
+         <tbody>
+           <tr>
+             <td v-for="item in alicematrix[0]" :key="item">
+              [[ item ]]
+             </td>
+           </tr>
+           <tr>
+            <td v-for="item in alicematrix[1]" :key="item">
+             [[ item ]]
+            </td>
+          </tr>
+         </tbody>
+        </template>
+      </v-simple-table>
+      <br>
+      <v-subheader v-show="show">Bob C matrix</v-subheader>
+      <v-simple-table dark v-show="show">
+        <template v-slot:default>
+         <tbody>
+           <tr>
+             <td v-for="item in bobmatrix" :key="item">
+              [[ item ]]
+             </td>
+           </tr>
+          </tr>
+         </tbody>
+        </template>
+      </v-simple-table>
+    </template>
         </v-container>
       </v-main>
     </v-app>
@@ -43,7 +88,10 @@
     data: {
     message: 'Alice is Richer than bob',
     alice:8,
-    bob:5
+    bob:5,
+    alicematrix:[],
+    bobmatrix:[],
+    show:true
   },
   methods:{
      getCookie: function(cname) {
@@ -59,10 +107,15 @@
     }
   }
   return "";
+},
+toogleshow: function(){
+  this.show=!this.show
 }
   },
-  watch: {
-    alice: function () {
+  created(){
+  console.log("hello");
+  if (this.alice=="")
+      return 0;
         let data = {x:this.alice,y:this.bob};
         let csrftoken = this.getCookie('csrftoken');
         fetch("getricher/", {
@@ -70,17 +123,21 @@
         body: JSON.stringify(data),
         headers: { "X-CSRFToken": csrftoken },
         }).then(res=>res.json()).then(res => {
-        console.log("Request complete! response:", res);
-        if(res==1){
+        console.log("Request complete! response:", res["result"]);
+        if(res["result"]==1){
             this.message="Alice is Richer than bob";
         }
         else{
             this.message="Bob is Richer than Alice";
         }
+        this.alicematrix=res["T"];
+        this.bobmatrix=res["C"];
         });
-        
-    },
-    bob: function () {
+},
+  watch: {
+    alice: function () {
+      if (this.alice=="")
+      return 0;
         let data = {x:this.alice,y:this.bob};
         let csrftoken = this.getCookie('csrftoken');
         fetch("getricher/", {
@@ -88,13 +145,37 @@
         body: JSON.stringify(data),
         headers: { "X-CSRFToken": csrftoken },
         }).then(res=>res.json()).then(res => {
-        console.log("Request complete! response:", res);
-        if(res==1){
-            this.message="Alice is Reacher than bob";
+        console.log("Request complete! response:", res["result"]);
+        if(res["result"]==1){
+            this.message="Alice is Richer than bob";
         }
         else{
-            this.message="Bob is richer than Alice";
+            this.message="Bob is Richer than Alice";
         }
+        this.alicematrix=res["T"];
+        this.bobmatrix=res["C"];
+        });
+        
+    },
+    bob: function () {
+      if (this.bob=="")
+      return 0;
+        let data = {x:this.alice,y:this.bob};
+        let csrftoken = this.getCookie('csrftoken');
+        fetch("getricher/", {
+        method: "POST", 
+        body: JSON.stringify(data),
+        headers: { "X-CSRFToken": csrftoken },
+        }).then(res=>res.json()).then(res => {
+        // console.log("Request complete! response:", res["result"],res["T"],res["C"]);
+        if(res["result"]==1){
+            this.message="Alice is Richer than bob";
+        }
+        else{
+            this.message="Bob is Richer than Alice";
+        }
+        this.alicematrix=res["T"];
+        this.bobmatrix=res["C"];
         });
         
     }

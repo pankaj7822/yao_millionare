@@ -35,7 +35,7 @@ def computeCt(T, y, pk):
     for i in range(c,n):
         C[i] = elgamal.random_cipher(pk)
 
-    random.shuffle(C)
+    random.shuffle(C)        
     return C
 
 def IsAliceRicher(C, sk):
@@ -51,12 +51,10 @@ def getricher(x=8,y=6):
     while(len(x_b)!=11):
         x_b='0'+x_b
     x_a=[int(i) for i in x_b]
-    print(x_a)
     y_b=str(bin(y))[2:]
     while(len(y_b)!=11):
         y_b='0'+y_b
     y_a=[int(i) for i in y_b]
-    print(y_a)
 
     GT = -1 
     for i in range(11):
@@ -75,8 +73,7 @@ def getricher(x=8,y=6):
     isAliceRicher = IsAliceRicher(C, sk)
 
     assert( isAliceRicher == GT)
-
-    return isAliceRicher
+    return {"result":isAliceRicher,"T":T,"C":C}
 
 
 ## works for numbers greter than 0 and less than < 1024

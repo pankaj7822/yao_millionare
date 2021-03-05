@@ -9,7 +9,7 @@ def checkrich(request):
     x=int(r['x'])
     y=int(r['y'])
     result=getricher(x,y)
-    return HttpResponse(result)
+    return HttpResponse(json.dumps(result))
 
 def home(request):
     return render(request, 'index.html')
